@@ -1,0 +1,76 @@
+ <!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LifeQuest</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+
+    <!-- Seitenmenü links -->
+    <aside class="sidebar-left">
+      <div class="friends-box">
+        <h3>Freunde</h3>
+        <p>0 / 5 aktiv</p>
+        <div class="chat-placeholder">💬 Chat</div>
+      </div>
+    </aside>
+
+    <!-- Hauptinhalt -->
+    <main class="main-content">
+
+      <!-- XP-Bar -->
+      <div class="xp-bar">
+        <div class="xp-fill" style="width: 60%;"></div>
+        <span class="xp-level">Lv 6</span>
+      </div>
+
+      <!-- Aufgabenbereich -->
+      <section class="quests">
+        <h2>Aufgaben</h2>
+        <div id="questList">
+          <!-- Quests werden hier dynamisch eingefügt -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Seitenleiste rechts -->
+    <aside class="sidebar-right">
+
+      <!-- Avatar/Profil -->
+      <div class="profile" onclick="window.location.href='profil.html'">
+        <img src="assets/avatar.png" alt="Avatar">
+      </div>
+
+      <!-- Scoreboard -->
+      <div class="scoreboard">
+        <div class="scoreboard-header">
+          <button class="active">Tag</button>
+          <button>Woche</button>
+          <button>Alle</button>
+        </div>
+        <ol class="top-list">
+          <!-- Top 10 Spieler -->
+        </ol>
+        <div class="own-rank">
+          <strong>Du:</strong> Platz 24
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Werbung unten -->
+    <footer class="ads">
+      <div class="ad-box">Werbung</div>
+      <div class="ad-box">Werbung</div>
+    </footer>
+
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
