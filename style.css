@@ -1,0 +1,154 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: white;
+  color: #222;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+  grid-template-rows: auto 1fr auto;
+  height: 100vh;
+}
+
+.sidebar-left,
+.sidebar-right {
+  padding: 1em;
+  background-color: #f9f9f9;
+  border-right: 1px solid #eee;
+}
+
+.sidebar-right {
+  border-left: 1px solid #eee;
+}
+
+.main-content {
+  padding: 1em 2em;
+  display: flex;
+  flex-direction: column;
+}
+
+.xp-bar {
+  background: #e0f5ec;
+  border-radius: 10px;
+  height: 25px;
+  position: relative;
+  margin-bottom: 1.5em;
+  overflow: hidden;
+}
+
+.xp-fill {
+  background: linear-gradient(90deg, #2ecc71, #27ae60);
+  height: 100%;
+}
+
+.xp-level {
+  position: absolute;
+  right: 10px;
+  top: 3px;
+  font-weight: bold;
+  color: #333;
+}
+
+.quests h2 {
+  margin-top: 0;
+}
+
+#questList {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.quest {
+  background: #f5f5f5;
+  border-left: 5px solid #2ecc71;
+  padding: 1em;
+  border-radius: 8px;
+}
+
+.profile {
+  text-align: center;
+  cursor: pointer;
+  margin-bottom: 1em;
+}
+
+.profile img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+}
+
+.scoreboard {
+  background: #ffffff;
+  padding: 1em;
+  border-radius: 8px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.05);
+}
+
+.scoreboard-header {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 1em;
+}
+
+.scoreboard-header button {
+  border: none;
+  background: #e6f7f0;
+  padding: 0.5em 1em;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.scoreboard-header .active {
+  background: #2ecc71;
+  color: white;
+}
+
+.top-list {
+  list-style: decimal;
+  padding-left: 1.5em;
+  margin: 0;
+}
+
+.own-rank {
+  margin-top: 1em;
+  text-align: center;
+  font-weight: bold;
+}
+
+.friends-box {
+  background: #ffffff;
+  padding: 1em;
+  border-radius: 8px;
+  box-shadow: 0 0 4px rgba(0,0,0,0.05);
+  text-align: center;
+}
+
+.chat-placeholder {
+  margin-top: 1em;
+  color: #888;
+  font-size: 0.9em;
+}
+
+footer.ads {
+  grid-column: 1 / span 3;
+  display: flex;
+  justify-content: space-around;
+  padding: 1em;
+  background-color: #e0f7fa;
+}
+
+.ad-box {
+  width: 150px;
+  height: 100px;
+  background: #b2ebf2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  font-weight: bold;
+  color: #004d40;
+}
