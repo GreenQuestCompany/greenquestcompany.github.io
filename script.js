@@ -1,311 +1,480 @@
-// Mock Data
-let userData = {
-    id: 1,
-    name: "Alex Johnson",
-    level: 7,
-    xp: 2450,
-    xpToNext: 3000,
-    coins: 1250,
-    rank: 15
-};
+// Supabase Configuration
+const SUPABASE_URL = "https://your-project.supabase.co"
+const SUPABASE_ANON_KEY = "your-anon-key"
 
-let questsData = [
-    {
-        id: 1,
-        title: "Drink 8 Glasses of Water",
-        description: "Stay hydrated throughout the day by drinking at least 8 glasses of water.",
-        xpReward: 50,
-        coinReward: 10,
-        completed: false,
-        category: "health"
-    },
-    {
-        id: 2,
-        title: "Walk 10,000 Steps",
-        description: "Take a walk and reach your daily step goal of 10,000 steps.",
-        xpReward: 75,
-        coinReward: 15,
-        completed: true,
-        category: "health"
-    },
-    {
-        id: 3,
-        title: "Use Reusable Bag",
-        description: "Bring your own reusable bag when shopping to reduce plastic waste.",
-        xpReward: 40,
-        coinReward: 8,
-        completed: false,
-        category: "environment"
-    },
-    {
-        id: 4,
-        title: "Recycle Properly",
-        description: "Sort and recycle your waste according to local guidelines.",
-        xpReward: 30,
-        coinReward: 6,
-        completed: false,
-        category: "environment"
-    },
-    {
-        id: 5,
-        title: "Call a Friend",
-        description: "Connect with a friend or family member and have a meaningful conversation.",
-        xpReward: 35,
-        coinReward: 7,
-        completed: false,
-        category: "social"
-    }
-];
+// Initialize Supabase client
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
-let leaderboardData = [
-    { id: 1, name: "Emma Wilson", level: 25, xp: 15420, rank: 1 },
-    { id: 2, name: "David Chen", level: 23, xp: 14890, rank: 2 },
-    { id: 3, name: "Sofia Rodriguez", level: 22, xp: 13750, rank: 3 },
-    { id: 4, name: "Marcus Johnson", level: 20, xp: 12340, rank: 4 },
-    { id: 5, name: "Lisa Park", level: 19, xp: 11890, rank: 5 },
-    { id: 6, name: "Tom Anderson", level: 18, xp: 10950, rank: 6 },
-    { id: 7, name: "Maya Patel", level: 17, xp: 10200, rank: 7 },
-    { id: 8, name: "Chris Brown", level: 16, xp: 9750, rank: 8 },
-    { id: 9, name: "Anna Schmidt", level: 15, xp: 9200, rank: 9 },
-    { id: 10, name: "Jake Miller", level: 14, xp: 8650, rank: 10 },
-    { id: 11, name: "Rachel Green", level: 13, xp: 8100, rank: 11 },
-    { id: 12, name: "Kevin Lee", level: 12, xp: 7550, rank: 12 },
-    { id: 13, name: "Nicole Davis", level: 11, xp: 7000, rank: 13 },
-    { id: 14, name: "Ryan Taylor", level: 10, xp: 6450, rank: 14 },
-    { id: 15, name: "Alex Johnson", level: 7, xp: 2450, rank: 15 }
-];
+// Global state
+let currentUser = null
+let userQuests = []
+let allQuests = []
 
 // Initialize App
-document.addEventListener('DOMContentLoaded', function() {
-    // Simulate loading
-    setTimeout(() => {
-        document.getElementById('loading-screen').classList.add('hidden');
-        document.getElementById('app').classList.remove('hidden');
-        initializeApp();
-    }, 1500);
-});
+document.addEventListener("DOMContentLoaded", () => {
+  initializeApp()
+})
 
-function initializeApp() {
-    updateUserDisplay();
-    renderQuests();
-    renderLeaderboard();
-    setupEventListeners();
+async function initializeApp() {
+  // Check if user is already logged in
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+
+  if (session) {
+    currentUser = session.user
+    await loadUserData()
+    showApp()
+  } else {
+    showAuth()
+  }
+
+  hideLoading()
+  setupEventListeners()
 }
 
-function updateUserDisplay() {
-    // Update XP Bar
-    const progress = (userData.xp / userData.xpToNext) * 100;
-    document.getElementById('xp-progress').style.width = progress + '%';
-    
-    // Update user info
-    document.getElementById('user-level').textContent = userData.level;
-    document.getElementById('current-xp').textContent = userData.xp.toLocaleString();
-    document.getElementById('max-xp').textContent = userData.xpToNext.toLocaleString();
-    document.getElementById('user-coins').textContent = userData.coins.toLocaleString();
-    document.getElementById('username').textContent = userData.name;
-    document.getElementById('profile-level').textContent = userData.level;
+function hideLoading() {
+  document.getElementById("loading-screen").classList.add("hidden")
+}
+
+function showAuth() {
+  document.getElementById("auth-screen").classList.remove("hidden")
+  document.getElementById("app").classList.add("hidden")
+}
+
+function showApp() {
+  document.getElementById("auth-screen").classList.add("hidden")
+  document.getElementById("app").classList.remove("hidden")
+}
+
+// Authentication Functions
+function showLogin() {
+  document.querySelector(".auth-tab.active").classList.remove("active")
+  document.querySelector('[onclick="showLogin()"]').classList.add("active")
+  document.getElementById("login-form").classList.remove("hidden")
+  document.getElementById("signup-form").classList.add("hidden")
+}
+
+function showSignup() {
+  document.querySelector(".auth-tab.active").classList.remove("active")
+  document.querySelector('[onclick="showSignup()"]').classList.add("active")
+  document.getElementById("login-form").classList.add("hidden")
+  document.getElementById("signup-form").classList.remove("hidden")
+}
+
+async function handleLogin(email, password) {
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    })
+
+    if (error) throw error
+
+    currentUser = data.user
+    await loadUserData()
+    showApp()
+    hideAuthError()
+  } catch (error) {
+    showAuthError(error.message)
+  }
+}
+
+async function handleSignup(username, email, password) {
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email: email,
+      password: password,
+    })
+
+    if (error) throw error
+
+    // Create user profile
+    const { error: profileError } = await supabase.from("users").insert([
+      {
+        id: data.user.id,
+        email: email,
+        username: username,
+        level: 1,
+        xp: 0,
+        xp_to_next: 1000,
+        coins: 0,
+      },
+    ])
+
+    if (profileError) throw profileError
+
+    currentUser = data.user
+    await loadUserData()
+    showApp()
+    hideAuthError()
+  } catch (error) {
+    showAuthError(error.message)
+  }
+}
+
+async function logout() {
+  await supabase.auth.signOut()
+  currentUser = null
+  showAuth()
+}
+
+function showAuthError(message) {
+  const errorDiv = document.getElementById("auth-error")
+  errorDiv.textContent = message
+  errorDiv.classList.remove("hidden")
+}
+
+function hideAuthError() {
+  document.getElementById("auth-error").classList.add("hidden")
+}
+
+// Data Loading Functions
+async function loadUserData() {
+  try {
+    // Load user profile
+    const { data: userData, error: userError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", currentUser.id)
+      .single()
+
+    if (userError) throw userError
+
+    // Update last login
+    await supabase.from("users").update({ last_login: new Date().toISOString() }).eq("id", currentUser.id)
+
+    // Load quests and user progress
+    await Promise.all([loadQuests(), loadLeaderboard(), loadFriends()])
+
+    updateUserDisplay(userData)
+  } catch (error) {
+    console.error("Error loading user data:", error)
+  }
+}
+
+async function loadQuests() {
+  try {
+    // Load all quests
+    const { data: questsData, error: questsError } = await supabase.from("quests").select("*")
+
+    if (questsError) throw questsError
+    allQuests = questsData
+
+    // Load user quest progress
+    const { data: userQuestsData, error: userQuestsError } = await supabase
+      .from("user_quests")
+      .select("*")
+      .eq("user_id", currentUser.id)
+
+    if (userQuestsError) throw userQuestsError
+    userQuests = userQuestsData
+
+    renderQuests()
+  } catch (error) {
+    console.error("Error loading quests:", error)
+  }
+}
+
+async function loadLeaderboard() {
+  try {
+    const { data, error } = await supabase.from("leaderboard").select("*").order("xp", { ascending: false }).limit(15)
+
+    if (error) throw error
+
+    renderLeaderboard(data)
+  } catch (error) {
+    console.error("Error loading leaderboard:", error)
+  }
+}
+
+async function loadFriends() {
+  try {
+    const { data, error } = await supabase
+      .from("friendships")
+      .select(`
+                *,
+                friend:users!friendships_friend_id_fkey(username, level)
+            `)
+      .eq("user_id", currentUser.id)
+      .eq("status", "accepted")
+
+    if (error) throw error
+
+    renderFriends(data)
+  } catch (error) {
+    console.error("Error loading friends:", error)
+  }
+}
+
+// UI Update Functions
+function updateUserDisplay(userData) {
+  const progress = (userData.xp / userData.xp_to_next) * 100
+  document.getElementById("xp-progress").style.width = progress + "%"
+
+  document.getElementById("user-level").textContent = userData.level
+  document.getElementById("current-xp").textContent = userData.xp.toLocaleString()
+  document.getElementById("max-xp").textContent = userData.xp_to_next.toLocaleString()
+  document.getElementById("user-coins").textContent = userData.coins.toLocaleString()
+  document.getElementById("username").textContent = userData.username
+  document.getElementById("profile-level").textContent = userData.level
 }
 
 function renderQuests() {
-    const container = document.getElementById('quests-container');
-    container.innerHTML = '';
-    
-    questsData.forEach(quest => {
-        const questElement = createQuestElement(quest);
-        container.appendChild(questElement);
-    });
+  const container = document.getElementById("quests-container")
+  container.innerHTML = ""
+
+  allQuests.forEach((quest) => {
+    const userQuest = userQuests.find((uq) => uq.quest_id === quest.id)
+    const questElement = createQuestElement(quest, userQuest)
+    container.appendChild(questElement)
+  })
 }
 
-function createQuestElement(quest) {
-    const questDiv = document.createElement('div');
-    questDiv.className = `quest-item ${quest.completed ? 'completed' : ''}`;
-    
-    questDiv.innerHTML = `
+function createQuestElement(quest, userQuest) {
+  const questDiv = document.createElement("div")
+  const isCompleted = userQuest && userQuest.completed
+  questDiv.className = `quest-item ${isCompleted ? "completed" : ""}`
+
+  questDiv.innerHTML = `
         <div class="quest-header">
             <div class="quest-info">
                 <div class="quest-title-row">
-                    <h3 class="quest-title ${quest.completed ? 'completed' : ''}">${quest.title}</h3>
+                    <h3 class="quest-title ${isCompleted ? "completed" : ""}">${quest.title}</h3>
                     <span class="quest-category category-${quest.category}">${quest.category}</span>
                 </div>
-                <p class="quest-description ${quest.completed ? 'completed' : ''}">${quest.description}</p>
+                <p class="quest-description ${isCompleted ? "completed" : ""}">${quest.description}</p>
                 <div class="quest-rewards">
                     <div class="reward xp">
                         <i class="fas fa-star"></i>
-                        <span>${quest.xpReward} XP</span>
+                        <span>${quest.xp_reward} XP</span>
                     </div>
                     <div class="reward coins">
                         <i class="fas fa-coins"></i>
-                        <span>${quest.coinReward} Coins</span>
+                        <span>${quest.coin_reward} Coins</span>
                     </div>
                 </div>
             </div>
             <div class="quest-action">
-                ${quest.completed ? 
-                    '<i class="fas fa-check-circle completed-icon"></i>' :
-                    `<button class="complete-button" onclick="completeQuest(${quest.id})">Complete</button>`
+                ${
+                  isCompleted
+                    ? '<i class="fas fa-check-circle completed-icon"></i>'
+                    : `<button class="complete-button" onclick="completeQuest('${quest.id}')">Complete</button>`
                 }
             </div>
         </div>
-    `;
-    
-    return questDiv;
+    `
+
+  return questDiv
 }
 
-function completeQuest(questId) {
-    const quest = questsData.find(q => q.id === questId);
-    if (!quest || quest.completed) return;
-    
+async function completeQuest(questId) {
+  try {
+    const quest = allQuests.find((q) => q.id === questId)
+    if (!quest) return
+
+    // Check if quest is already completed
+    const existingUserQuest = userQuests.find((uq) => uq.quest_id === questId)
+    if (existingUserQuest && existingUserQuest.completed) return
+
     // Mark quest as completed
-    quest.completed = true;
-    
-    // Update user stats
-    userData.xp += quest.xpReward;
-    userData.coins += quest.coinReward;
-    
+    const { error: questError } = await supabase.from("user_quests").upsert({
+      user_id: currentUser.id,
+      quest_id: questId,
+      completed: true,
+      completed_at: new Date().toISOString(),
+    })
+
+    if (questError) throw questError
+
+    // Update user XP and coins
+    const { data: userData, error: userError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", currentUser.id)
+      .single()
+
+    if (userError) throw userError
+
+    const newXP = userData.xp + quest.xp_reward
+    const newCoins = userData.coins + quest.coin_reward
+    let newLevel = userData.level
+    let newXPToNext = userData.xp_to_next
+
     // Check for level up
-    if (userData.xp >= userData.xpToNext) {
-        userData.level++;
-        userData.xp = userData.xp - userData.xpToNext;
-        userData.xpToNext = Math.floor(userData.xpToNext * 1.2); // Increase XP requirement
+    if (newXP >= userData.xp_to_next) {
+      newLevel++
+      newXPToNext = Math.floor(userData.xp_to_next * 1.2)
     }
-    
-    // Update displays
-    updateUserDisplay();
-    renderQuests();
-    
-    // Show success modal
-    showSuccessModal(quest);
+
+    const { error: updateError } = await supabase
+      .from("users")
+      .update({
+        xp: newXP,
+        coins: newCoins,
+        level: newLevel,
+        xp_to_next: newXPToNext,
+      })
+      .eq("id", currentUser.id)
+
+    if (updateError) throw updateError
+
+    // Update local state
+    userQuests = userQuests.filter((uq) => uq.quest_id !== questId)
+    userQuests.push({
+      user_id: currentUser.id,
+      quest_id: questId,
+      completed: true,
+      completed_at: new Date().toISOString(),
+    })
+
+    // Refresh displays
+    await loadUserData()
+    showSuccessModal(quest)
+  } catch (error) {
+    console.error("Error completing quest:", error)
+  }
 }
 
-function showSuccessModal(quest) {
-    document.getElementById('success-message').textContent = `Great job completing "${quest.title}"!`;
-    document.getElementById('xp-reward').textContent = `+${quest.xpReward} XP`;
-    document.getElementById('coin-reward').textContent = `+${quest.coinReward} Coins`;
-    document.getElementById('success-modal').classList.remove('hidden');
-}
+function renderLeaderboard(leaderboardData) {
+  const container = document.getElementById("leaderboard-container")
+  container.innerHTML = ""
 
-function closeModal() {
-    document.getElementById('success-modal').classList.add('hidden');
-}
+  const top10 = leaderboardData.slice(0, 10)
 
-function renderLeaderboard() {
-    const container = document.getElementById('leaderboard-container');
-    container.innerHTML = '';
-    
-    const top10 = leaderboardData.slice(0, 10);
-    
-    top10.forEach(player => {
-        const playerElement = createLeaderboardElement(player);
-        container.appendChild(playerElement);
-    });
-    
-    // Show current user rank if outside top 10
-    if (userData.rank > 10) {
-        const currentUserRank = document.getElementById('current-user-rank');
-        const currentUser = leaderboardData.find(p => p.id === userData.id);
-        if (currentUser) {
-            currentUserRank.innerHTML = createLeaderboardElement(currentUser, true).outerHTML;
-            currentUserRank.classList.remove('hidden');
-        }
-    }
+  top10.forEach((player) => {
+    const playerElement = createLeaderboardElement(player)
+    container.appendChild(playerElement)
+  })
+
+  // Show current user rank if outside top 10
+  const currentUserData = leaderboardData.find((p) => p.id === currentUser.id)
+  if (currentUserData && currentUserData.rank > 10) {
+    const currentUserRank = document.getElementById("current-user-rank")
+    currentUserRank.innerHTML = createLeaderboardElement(currentUserData, true).outerHTML
+    currentUserRank.classList.remove("hidden")
+  }
 }
 
 function createLeaderboardElement(player, isCurrentUser = false) {
-    const playerDiv = document.createElement('div');
-    playerDiv.className = `leaderboard-item ${isCurrentUser || player.id === userData.id ? 'current-user' : ''}`;
-    
-    const rankIcon = getRankIcon(player.rank);
-    
-    playerDiv.innerHTML = `
+  const playerDiv = document.createElement("div")
+  playerDiv.className = `leaderboard-item ${isCurrentUser || player.id === currentUser.id ? "current-user" : ""}`
+
+  const rankIcon = getRankIcon(player.rank)
+
+  playerDiv.innerHTML = `
         <div class="rank-icon ${getRankClass(player.rank)}">${rankIcon}</div>
         <div class="player-info">
-            <p class="player-name ${isCurrentUser || player.id === userData.id ? 'current-user' : ''}">${player.name}${isCurrentUser || player.id === userData.id ? ' (You)' : ''}</p>
+            <p class="player-name ${isCurrentUser || player.id === currentUser.id ? "current-user" : ""}">${player.username}${isCurrentUser || player.id === currentUser.id ? " (You)" : ""}</p>
             <p class="player-level">Level ${player.level}</p>
         </div>
         <div class="player-xp">
             <p class="xp-amount">${player.xp.toLocaleString()}</p>
             <p class="xp-label">XP</p>
         </div>
-    `;
-    
-    return playerDiv;
+    `
+
+  return playerDiv
+}
+
+function renderFriends(friendsData) {
+  const friendsList = document.getElementById("friends-list")
+  const activeFriends = friendsData.length
+  const totalFriends = friendsData.length // In a real app, this might be different
+
+  document.getElementById("active-friends").textContent = activeFriends
+  document.getElementById("total-friends").textContent = totalFriends
+
+  friendsList.innerHTML = ""
+
+  friendsData.slice(0, 3).forEach((friendship) => {
+    const friendDiv = document.createElement("div")
+    friendDiv.className = "friend-item"
+    friendDiv.innerHTML = `
+            <div class="online-indicator"></div>
+            <span class="friend-name">${friendship.friend.username}</span>
+            <span class="friend-level">L${friendship.friend.level}</span>
+        `
+    friendsList.appendChild(friendDiv)
+  })
 }
 
 function getRankIcon(rank) {
-    switch(rank) {
-        case 1: return '<i class="fas fa-trophy"></i>';
-        case 2: return '<i class="fas fa-medal"></i>';
-        case 3: return '<i class="fas fa-award"></i>';
-        default: return `#${rank}`;
-    }
+  switch (rank) {
+    case 1:
+      return '<i class="fas fa-trophy"></i>'
+    case 2:
+      return '<i class="fas fa-medal"></i>'
+    case 3:
+      return '<i class="fas fa-award"></i>'
+    default:
+      return `#${rank}`
+  }
 }
 
 function getRankClass(rank) {
-    switch(rank) {
-        case 1: return 'rank-1';
-        case 2: return 'rank-2';
-        case 3: return 'rank-3';
-        default: return 'rank-other';
-    }
+  switch (rank) {
+    case 1:
+      return "rank-1"
+    case 2:
+      return "rank-2"
+    case 3:
+      return "rank-3"
+    default:
+      return "rank-other"
+  }
+}
+
+function showSuccessModal(quest) {
+  document.getElementById("success-message").textContent = `Great job completing "${quest.title}"!`
+  document.getElementById("xp-reward").textContent = `+${quest.xp_reward} XP`
+  document.getElementById("coin-reward").textContent = `+${quest.coin_reward} Coins`
+  document.getElementById("success-modal").classList.remove("hidden")
+}
+
+function closeModal() {
+  document.getElementById("success-modal").classList.add("hidden")
 }
 
 function setupEventListeners() {
-    // Filter buttons
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    filterButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            // Remove active class from all buttons
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            // Add active class to clicked button
-            this.classList.add('active');
-            
-            // In a real app, this would filter the leaderboard data
-            // For now, we'll just re-render the same data
-            renderLeaderboard();
-        });
-    });
-    
-    // Modal close on background click
-    document.getElementById('success-modal').addEventListener('click', function(e) {
-        if (e.target === this) {
-            closeModal();
-        }
-    });
-}
+  // Auth forms
+  document.getElementById("login-form").addEventListener("submit", async (e) => {
+    e.preventDefault()
+    const email = document.getElementById("login-email").value
+    const password = document.getElementById("login-password").value
+    await handleLogin(email, password)
+  })
 
-function openProfile() {
-    alert('Profile page would open here. This could navigate to a settings page or show a profile modal.');
-}
+  document.getElementById("signup-form").addEventListener("submit", async (e) => {
+    e.preventDefault()
+    const username = document.getElementById("signup-username").value
+    const email = document.getElementById("signup-email").value
+    const password = document.getElementById("signup-password").value
+    await handleSignup(username, email, password)
+  })
 
-// Utility function to format numbers
-function formatNumber(num) {
-    return num.toLocaleString();
-}
+  // Filter buttons
+  const filterButtons = document.querySelectorAll(".filter-btn")
+  filterButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      filterButtons.forEach((btn) => btn.classList.remove("active"))
+      this.classList.add("active")
+      loadLeaderboard() // In a real app, this would filter by time period
+    })
+  })
 
-// Auto-save functionality (in a real app, this would sync with a backend)
-function saveUserData() {
-    localStorage.setItem('lifequest_user', JSON.stringify(userData));
-    localStorage.setItem('lifequest_quests', JSON.stringify(questsData));
-}
-
-function loadUserData() {
-    const savedUser = localStorage.getItem('lifequest_user');
-    const savedQuests = localStorage.getItem('lifequest_quests');
-    
-    if (savedUser) {
-        userData = JSON.parse(savedUser);
+  // Modal close on background click
+  document.getElementById("success-modal").addEventListener("click", function (e) {
+    if (e.target === this) {
+      closeModal()
     }
-    
-    if (savedQuests) {
-        questsData = JSON.parse(savedQuests);
+  })
+
+  // Listen for auth state changes
+  supabase.auth.onAuthStateChange((event, session) => {
+    if (event === "SIGNED_OUT") {
+      currentUser = null
+      showAuth()
     }
+  })
 }
-
-// Load saved data on page load
-loadUserData();
-
-// Save data periodically
-setInterval(saveUserData, 30000); // Save every 30 seconds
-
-// Save data before page unload
-window.addEventListener('beforeunload', saveUserData);
