@@ -1,76 +1,71 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>LifeQuest</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+  <header>
+    <div class="logo">LifeQuest</div>
+    <div class="level-bar">
+      <span>Level 7</span>
+      <div class="xp-bar"><div class="xp-progress" style="width: 81.6%;"></div></div>
+      <span>2450 / 3000 XP</span>
+    </div>
+    <div class="profile">
+      <div class="coins">🪙 1.250</div>
+      <div class="user">Alex Johnson<br><small>Level 7</small></div>
+    </div>
+  </header>
 
-  <div class="container">
+  <main class="container">
+    <!-- Friends Section -->
+    <section class="sidebar">
+      <h2>Friends</h2>
+      <p><strong>3/5</strong> friends online</p>
+      <button>Group Chat</button>
+      <button>Invite Friends</button>
+      <ul>
+        <li>🟢 Alex <small>L12</small></li>
+        <li>🟢 Sarah <small>L8</small></li>
+        <li>🟢 Mike <small>L15</small></li>
+      </ul>
+    </section>
 
-    <!-- Seitenmenü links -->
-    <aside class="sidebar-left">
-      <div class="friends-box">
-        <h3>Freunde</h3>
-        <p>0 / 5 aktiv</p>
-        <div class="chat-placeholder">💬 Chat</div>
+    <!-- Daily Quests -->
+    <section class="quests">
+      <h2>Daily Quests</h2>
+      <div class="quest">
+        <h3>Drink 8 Glasses of Water <span class="tag health">health</span></h3>
+        <p>Stay hydrated throughout the day by drinking at least 8 glasses of water.</p>
+        <div class="rewards">⭐ 50 XP &nbsp; 🪙 10 Coins</div>
+        <button class="complete">Complete</button>
       </div>
-    </aside>
-
-    <!-- Hauptinhalt -->
-    <main class="main-content">
-
-      <!-- XP-Bar -->
-      <div class="xp-bar">
-        <div class="xp-fill" style="width: 60%;"></div>
-        <span class="xp-level">Lv 6</span>
+      <div class="quest done">
+        <h3>Walk 10,000 Steps <span class="tag health">health</span></h3>
+        <p>Take a walk and reach your daily step goal of 10,000 steps.</p>
+        <div class="rewards">⭐ 75 XP &nbsp; 🪙 15 Coins</div>
+        <div class="checkmark">✔</div>
       </div>
+      <!-- weitere Quests hier -->
+    </section>
 
-      <!-- Aufgabenbereich -->
-      <section class="quests">
-        <h2>Aufgaben</h2>
-        <div id="questList">
-          <!-- Quests werden hier dynamisch eingefügt -->
-        </div>
-      </section>
-
-    </main>
-
-    <!-- Seitenleiste rechts -->
-    <aside class="sidebar-right">
-
-      <!-- Avatar/Profil -->
-      <div class="profile" onclick="window.location.href='profil.html'">
-        <img src="assets/avatar.png" alt="Avatar">
+    <!-- Leaderboard -->
+    <section class="leaderboard">
+      <h2>Leaderboard</h2>
+      <div class="tabs">
+        <button>Today</button>
+        <button>Week</button>
+        <button class="active">All Time</button>
       </div>
-
-      <!-- Scoreboard -->
-      <div class="scoreboard">
-        <div class="scoreboard-header">
-          <button class="active">Tag</button>
-          <button>Woche</button>
-          <button>Alle</button>
-        </div>
-        <ol class="top-list">
-          <!-- Top 10 Spieler -->
-        </ol>
-        <div class="own-rank">
-          <strong>Du:</strong> Platz 24
-        </div>
-      </div>
-
-    </aside>
-
-    <!-- Werbung unten -->
-    <footer class="ads">
-      <div class="ad-box">Werbung</div>
-      <div class="ad-box">Werbung</div>
-    </footer>
-
-  </div>
-
-  <script src="script.js"></script>
+      <ol>
+        <li><strong>Emma Wilson</strong> <span>15.420 XP</span></li>
+        <li>David Chen <span>14.890 XP</span></li>
+        <li>Sofia Rodriguez <span>13.750 XP</span></li>
+        <!-- weitere Spieler -->
+      </ol>
+    </section>
+  </main>
 </body>
 </html>
