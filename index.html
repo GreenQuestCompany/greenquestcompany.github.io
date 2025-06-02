@@ -1,71 +1,199 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <title>LifeQuest</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeQuest - Gamify Your Sustainable Life</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-  <header>
-    <div class="logo">LifeQuest</div>
-    <div class="level-bar">
-      <span>Level 7</span>
-      <div class="xp-bar"><div class="xp-progress" style="width: 81.6%;"></div></div>
-      <span>2450 / 3000 XP</span>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <h2>Loading LifeQuest...</h2>
+            <div class="loading-spinner"></div>
+        </div>
     </div>
-    <div class="profile">
-      <div class="coins">🪙 1.250</div>
-      <div class="user">Alex Johnson<br><small>Level 7</small></div>
+
+    <!-- Main App -->
+    <div id="app" class="app hidden">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>LifeQuest</h1>
+                </div>
+
+                <!-- XP Bar - Center -->
+                <div class="xp-container">
+                    <div class="xp-bar-component">
+                        <div class="xp-info">
+                            <span class="level-text">Level <span id="user-level">7</span></span>
+                            <span class="xp-text"><span id="current-xp">2450</span> / <span id="max-xp">3000</span> XP</span>
+                        </div>
+                        <div class="xp-bar">
+                            <div class="xp-progress" id="xp-progress"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Avatar - Right -->
+                <div class="profile-section">
+                    <div class="coins-display">
+                        <i class="fas fa-coins"></i>
+                        <span id="user-coins">1250</span>
+                    </div>
+                    <button class="profile-button" onclick="openProfile()">
+                        <div class="avatar">
+                            <i class="fas fa-cog"></i>
+                        </div>
+                        <div class="profile-info">
+                            <p class="username" id="username">Alex Johnson</p>
+                            <p class="user-level-small">Level <span id="profile-level">7</span></p>
+                        </div>
+                        <i class="fas fa-cog profile-settings"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-grid">
+                <!-- Friends Area - Left Sidebar -->
+                <aside class="friends-sidebar">
+                    <div class="card">
+                        <h3>Friends</h3>
+                        
+                        <div class="active-friends">
+                            <div class="friends-header">
+                                <i class="fas fa-users"></i>
+                                <span>Active Now</span>
+                            </div>
+                            <div class="friends-count">
+                                <span id="active-friends">3</span>/<span id="total-friends">5</span>
+                            </div>
+                            <p class="friends-subtitle">friends online</p>
+                        </div>
+
+                        <div class="friends-actions">
+                            <button class="action-button chat-button">
+                                <i class="fas fa-comments"></i>
+                                <span>Group Chat</span>
+                            </button>
+                            <button class="action-button invite-button">
+                                <i class="fas fa-user-plus"></i>
+                                <span>Invite Friends</span>
+                            </button>
+                        </div>
+
+                        <div class="friends-list">
+                            <div class="friend-item">
+                                <div class="online-indicator"></div>
+                                <span class="friend-name">Alex</span>
+                                <span class="friend-level">L12</span>
+                            </div>
+                            <div class="friend-item">
+                                <div class="online-indicator"></div>
+                                <span class="friend-name">Sarah</span>
+                                <span class="friend-level">L8</span>
+                            </div>
+                            <div class="friend-item">
+                                <div class="online-indicator"></div>
+                                <span class="friend-name">Mike</span>
+                                <span class="friend-level">L15</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Quest Area - Center -->
+                <section class="quest-area">
+                    <div class="card">
+                        <h2>Daily Quests</h2>
+                        <div id="quests-container" class="quests-container">
+                            <!-- Quests will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Scoreboard - Right Sidebar -->
+                <aside class="scoreboard-sidebar">
+                    <div class="card">
+                        <h2>Leaderboard</h2>
+                        
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="all">All Time</button>
+                            <button class="filter-btn" data-filter="week">Week</button>
+                            <button class="filter-btn" data-filter="day">Today</button>
+                        </div>
+
+                        <div id="leaderboard-container" class="leaderboard-container">
+                            <!-- Leaderboard will be populated by JavaScript -->
+                        </div>
+
+                        <div id="current-user-rank" class="current-user-rank hidden">
+                            <!-- Current user rank will be shown here if outside top 10 -->
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- Ad Spaces - Bottom -->
+            <div class="ad-spaces">
+                <div class="ad-space">
+                    <div class="ad-content">
+                        <div class="ad-icon">
+                            <i class="fas fa-external-link-alt"></i>
+                        </div>
+                        <div class="ad-text">
+                            <h4>Eco Products</h4>
+                            <p>Discover sustainable products for your daily life</p>
+                        </div>
+                        <button class="ad-button">Learn More</button>
+                    </div>
+                </div>
+                <div class="ad-space">
+                    <div class="ad-content">
+                        <div class="ad-icon">
+                            <i class="fas fa-external-link-alt"></i>
+                        </div>
+                        <div class="ad-text">
+                            <h4>Sustainability Tips</h4>
+                            <p>Learn more about living sustainably</p>
+                        </div>
+                        <button class="ad-button">Learn More</button>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
-  </header>
 
-  <main class="container">
-    <!-- Friends Section -->
-    <section class="sidebar">
-      <h2>Friends</h2>
-      <p><strong>3/5</strong> friends online</p>
-      <button>Group Chat</button>
-      <button>Invite Friends</button>
-      <ul>
-        <li>🟢 Alex <small>L12</small></li>
-        <li>🟢 Sarah <small>L8</small></li>
-        <li>🟢 Mike <small>L15</small></li>
-      </ul>
-    </section>
+    <!-- Success Modal -->
+    <div id="success-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fas fa-check-circle success-icon"></i>
+                <h3>Quest Completed!</h3>
+            </div>
+            <div class="modal-body">
+                <p id="success-message">Great job! You earned rewards!</p>
+                <div class="rewards">
+                    <div class="reward">
+                        <i class="fas fa-star"></i>
+                        <span id="xp-reward">+50 XP</span>
+                    </div>
+                    <div class="reward">
+                        <i class="fas fa-coins"></i>
+                        <span id="coin-reward">+10 Coins</span>
+                    </div>
+                </div>
+            </div>
+            <button class="modal-close" onclick="closeModal()">Continue</button>
+        </div>
+    </div>
 
-    <!-- Daily Quests -->
-    <section class="quests">
-      <h2>Daily Quests</h2>
-      <div class="quest">
-        <h3>Drink 8 Glasses of Water <span class="tag health">health</span></h3>
-        <p>Stay hydrated throughout the day by drinking at least 8 glasses of water.</p>
-        <div class="rewards">⭐ 50 XP &nbsp; 🪙 10 Coins</div>
-        <button class="complete">Complete</button>
-      </div>
-      <div class="quest done">
-        <h3>Walk 10,000 Steps <span class="tag health">health</span></h3>
-        <p>Take a walk and reach your daily step goal of 10,000 steps.</p>
-        <div class="rewards">⭐ 75 XP &nbsp; 🪙 15 Coins</div>
-        <div class="checkmark">✔</div>
-      </div>
-      <!-- weitere Quests hier -->
-    </section>
-
-    <!-- Leaderboard -->
-    <section class="leaderboard">
-      <h2>Leaderboard</h2>
-      <div class="tabs">
-        <button>Today</button>
-        <button>Week</button>
-        <button class="active">All Time</button>
-      </div>
-      <ol>
-        <li><strong>Emma Wilson</strong> <span>15.420 XP</span></li>
-        <li>David Chen <span>14.890 XP</span></li>
-        <li>Sofia Rodriguez <span>13.750 XP</span></li>
-        <!-- weitere Spieler -->
-      </ol>
-    </section>
-  </main>
+    <script src="script.js"></script>
 </body>
 </html>
