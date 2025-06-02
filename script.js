@@ -34,7 +34,9 @@ async function initializeApp() {
 }
 
 function hideLoading() {
-  document.getElementById("loading-screen").classList.add("hidden")
+  setTimeout(() => {
+    document.getElementById("loading-screen").classList.add("hidden")
+  }, 2000)
 }
 
 function showAuth() {
