@@ -1,9 +1,10 @@
 // Supabase Configuration
-const SUPABASE_URL = "https://werkguvtcmwjfwypsljo.supabase.co"
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlcmtndXZ0Y213amZ3eXBzbGpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4NzU3MDMsImV4cCI6MjA2NDQ1MTcwM30.uXO8xBdn65AqTiwuyUPpRpKQxQXV0AJy3NKqOr45Zm4"
+const SUPABASE_URL = "https://your-project.supabase.co"
+const SUPABASE_ANON_KEY = "your-anon-key"
 
 // Initialize Supabase client
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+import { createClient } from "@supabase/supabase-js"
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
 
 // Global state
 let currentUser = null
@@ -19,7 +20,7 @@ async function initializeApp() {
   // Check if user is already logged in
   const {
     data: { session },
-  } = await supabaseClient.auth.getSession()
+  } = await supabase.auth.getSession()
 
   if (session) {
     currentUser = session.user
@@ -34,9 +35,7 @@ async function initializeApp() {
 }
 
 function hideLoading() {
-  setTimeout(() => {
-    document.getElementById("loading-screen").classList.add("hidden")
-  }, 2000)
+  document.getElementById("loading-screen").classList.add("hidden")
 }
 
 function showAuth() {
@@ -66,7 +65,7 @@ function showSignup() {
 
 async function handleLogin(email, password) {
   try {
-    const { data, error } = await supabaseClient.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: email,
       password: password,
     })
@@ -84,7 +83,7 @@ async function handleLogin(email, password) {
 
 async function handleSignup(username, email, password) {
   try {
-    const { data, error } = await supabaseClient.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: email,
       password: password,
     })
@@ -92,7 +91,7 @@ async function handleSignup(username, email, password) {
     if (error) throw error
 
     // Create user profile
-    const { error: profileError } = await supabaseClient.from("users").insert([
+    const { error: profileError } = await supabase.from("users").insert([
       {
         id: data.user.id,
         email: email,
@@ -116,7 +115,7 @@ async function handleSignup(username, email, password) {
 }
 
 async function logout() {
-  await supabaseClient.auth.signOut()
+  await supabase.auth.signOut()
   currentUser = null
   showAuth()
 }
@@ -135,7 +134,7 @@ function hideAuthError() {
 async function loadUserData() {
   try {
     // Load user profile
-    const { data: userData, error: userError } = await supabaseClient
+    const { data: userData, error: userError } = await supabase
       .from("users")
       .select("*")
       .eq("id", currentUser.id)
@@ -144,7 +143,7 @@ async function loadUserData() {
     if (userError) throw userError
 
     // Update last login
-    await supabaseClient.from("users").update({ last_login: new Date().toISOString() }).eq("id", currentUser.id)
+    await supabase.from("users").update({ last_login: new Date().toISOString() }).eq("id", currentUser.id)
 
     // Load quests and user progress
     await Promise.all([loadQuests(), loadLeaderboard(), loadFriends()])
@@ -158,13 +157,13 @@ async function loadUserData() {
 async function loadQuests() {
   try {
     // Load all quests
-    const { data: questsData, error: questsError } = await supabaseClient.from("quests").select("*")
+    const { data: questsData, error: questsError } = await supabase.from("quests").select("*")
 
     if (questsError) throw questsError
     allQuests = questsData
 
     // Load user quest progress
-    const { data: userQuestsData, error: userQuestsError } = await supabaseClient
+    const { data: userQuestsData, error: userQuestsError } = await supabase
       .from("user_quests")
       .select("*")
       .eq("user_id", currentUser.id)
@@ -180,7 +179,7 @@ async function loadQuests() {
 
 async function loadLeaderboard() {
   try {
-    const { data, error } = await supabaseClient.from("leaderboard").select("*").order("xp", { ascending: false }).limit(15)
+    const { data, error } = await supabase.from("leaderboard").select("*").order("xp", { ascending: false }).limit(15)
 
     if (error) throw error
 
@@ -192,7 +191,7 @@ async function loadLeaderboard() {
 
 async function loadFriends() {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from("friendships")
       .select(`
                 *,
@@ -280,7 +279,7 @@ async function completeQuest(questId) {
     if (existingUserQuest && existingUserQuest.completed) return
 
     // Mark quest as completed
-    const { error: questError } = await supabaseClient.from("user_quests").upsert({
+    const { error: questError } = await supabase.from("user_quests").upsert({
       user_id: currentUser.id,
       quest_id: questId,
       completed: true,
@@ -290,7 +289,7 @@ async function completeQuest(questId) {
     if (questError) throw questError
 
     // Update user XP and coins
-    const { data: userData, error: userError } = await supabaseClient
+    const { data: userData, error: userError } = await supabase
       .from("users")
       .select("*")
       .eq("id", currentUser.id)
@@ -309,7 +308,7 @@ async function completeQuest(questId) {
       newXPToNext = Math.floor(userData.xp_to_next * 1.2)
     }
 
-    const { error: updateError } = await supabaseClient
+    const { error: updateError } = await supabase
       .from("users")
       .update({
         xp: newXP,
@@ -473,10 +472,22 @@ function setupEventListeners() {
   })
 
   // Listen for auth state changes
-  supabaseClient.auth.onAuthStateChange((event, session) => {
+  supabase.auth.onAuthStateChange((event, session) => {
     if (event === "SIGNED_OUT") {
       currentUser = null
       showAuth()
     }
   })
+}
+
+// Shop Functions
+function openShop() {
+  // Option 1: Öffne in neuem Tab
+  window.open("https://example-shop.com", "_blank")
+
+  // Option 2: Öffne im gleichen Tab (auskommentiert)
+  // window.location.href = 'https://example-shop.com';
+
+  // Option 3: Für lokale Shop-Seite (auskommentiert)
+  // window.location.href = '/shop.html';
 }

@@ -30,12 +30,6 @@ body {
   z-index: 9999;
 }
 
-img {
-      margin-bottom: 20px;
-      width: 300px;
-      height: 200px;
-       
-    }
 .loading-content {
   text-align: center;
 }
@@ -180,7 +174,6 @@ img {
 
 .auth-button:hover {
   background: linear-gradient(to right, #1d4ed8, #0f766e);
-   transform: scale(1.05);
 }
 
 .auth-error {
@@ -296,7 +289,6 @@ img {
 
 .profile-button:hover {
   background: #f3f4f6;
-
 }
 
 .avatar {
@@ -327,6 +319,32 @@ img {
 
 .profile-settings {
   color: #9ca3af;
+}
+
+/* Shop Button */
+.shop-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(to right, #8b5cf6, #a855f7);
+  color: white;
+  border: none;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.shop-button:hover {
+  background: linear-gradient(to right, #7c3aed, #9333ea);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
+}
+
+.shop-button i {
+  font-size: 1rem;
 }
 
 /* Main Content */
@@ -419,7 +437,6 @@ img {
 
 .chat-button:hover {
   background: #bfdbfe;
-  
 }
 
 .invite-button {
@@ -911,29 +928,4 @@ img {
     margin-left: 0;
     align-self: flex-end;
   }
-}
-@keyframes logoutFormFade {
-  from {
-    opacity: 0;
-    transform: scale(0.5);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-@keyframes logoutScreenFade {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.auth-screen {
-  animation: logoutScreenFade 0.2s forwards;
-}
-.auth-container {
-  animation: logoutFormFade 0.4s forwards;
 }

@@ -2,19 +2,16 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="Bilder/faicon.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LifeQuest - Gamify Your Sustainable Life</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="script.js" defer></script>
 </head>
 <body>
     <!-- Loading Screen -->
     <div id="loading-screen" class="loading-screen">
         <div class="loading-content">
-            <img src="Bilder/Logo.png" alt="Logo" >
             <h2>Loading LifeQuest...</h2>
             <div class="loading-spinner"></div>
         </div>
@@ -24,7 +21,8 @@
     <div id="auth-screen" class="auth-screen hidden">
         <div class="auth-container">
             <div class="auth-header">
-                <img src="Bilder/Logo.png" alt="Logo" >
+                <h1>LifeQuest</h1>
+                <p>Gamify Your Sustainable Life</p>
             </div>
             
             <div class="auth-tabs">
@@ -90,6 +88,11 @@
 
                 <!-- Profile Avatar - Right -->
                 <div class="profile-section">
+                    <!-- Shop Button -->
+                    <button class="shop-button" onclick="openShop()">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Shop</span>
+                    </button>
                     <div class="coins-display">
                         <i class="fas fa-coins"></i>
                         <span id="user-coins">0</span>
