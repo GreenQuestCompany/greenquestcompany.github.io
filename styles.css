@@ -180,7 +180,7 @@ img {
 
 .auth-button:hover {
   background: linear-gradient(to right, #1d4ed8, #0f766e);
-   transform: scale(1.2);
+   transform: scale(1.05);
 }
 
 .auth-error {
@@ -296,7 +296,7 @@ img {
 
 .profile-button:hover {
   background: #f3f4f6;
-   transform: scale(1.2);
+
 }
 
 .avatar {
