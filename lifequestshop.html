@@ -277,6 +277,208 @@
             }
         }
 
+        /* Premium Section */
+        .section-title {
+            font-size: 2rem;
+            margin: 3rem 0 1rem;
+            text-align: center;
+            color: #1e293b;
+        }
+
+        .premium-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .premium-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-align: center;
+            border: 2px solid transparent;
+        }
+
+        .premium-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .premium-card.full {
+            border-color: #8b5cf6;
+            background: linear-gradient(135deg, #ffffff 0%, #f3f4f6 100%);
+        }
+
+        .premium-card.ads {
+            border-color: #3b82f6;
+        }
+
+        .premium-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .premium-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #1e293b;
+        }
+
+        .premium-price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #059669;
+            margin: 1rem 0;
+        }
+
+        .premium-features {
+            text-align: left;
+            margin: 1.5rem 0;
+        }
+
+        .premium-features li {
+            margin-bottom: 0.5rem;
+            list-style-type: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .premium-features li::before {
+            content: "✓";
+            color: #10b981;
+            font-weight: bold;
+        }
+
+        .premium-button {
+            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .premium-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+        }
+
+        .premium-button.ads-only {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        }
+
+        .premium-button.ads-only:hover {
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Contact Section */
+        .contact-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            margin-bottom: 3rem;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: #f1f5f9;
+            transform: translateX(5px);
+        }
+
+        .contact-icon {
+            font-size: 1.5rem;
+            color: #059669;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            padding: 0.75rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .submit-button {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem 0;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .header-content {
@@ -392,6 +594,111 @@
                 </button>
             </div>
         </div>
+
+        <!-- Premium Section -->
+        <div class="main-content">
+            <h2 class="section-title">⭐ Premium Options</h2>
+            <p class="subtitle">Enhance your LifeQuest experience!</p>
+        </div>
+
+        <div class="premium-container">
+            <!-- Full Premium -->
+            <div class="premium-card full">
+                <div class="premium-icon">👑</div>
+                <h3 class="premium-name">Premium Membership</h3>
+                <div class="premium-price">€4.99</div>
+                <ul class="premium-features">
+                    <li>Detailed statistics tracking</li>
+                    <li>Ad-free experience</li>
+                    <li>Exclusive premium avatars</li>
+                    <li>Priority customer support</li>
+                    <li>Early access to new features</li>
+                </ul>
+                <button class="premium-button" onclick="purchasePremium('full', 4.99)">
+                    Upgrade Now
+                </button>
+            </div>
+
+            <!-- Ad Removal -->
+            <div class="premium-card ads">
+                <div class="premium-icon">🚫</div>
+                <h3 class="premium-name">Remove Ads</h3>
+                <div class="premium-price">€1.99</div>
+                <ul class="premium-features">
+                    <li>Ad-free experience</li>
+                    <li>Faster app performance</li>
+                    <li>Distraction-free interface</li>
+                </ul>
+                <button class="premium-button ads-only" onclick="purchasePremium('ads', 1.99)">
+                    Remove Ads
+                </button>
+            </div>
+        </div>
+
+        <!-- Contact Section -->
+        <div class="main-content">
+            <h2 class="section-title">📬 Contact Us</h2>
+            <p class="subtitle">Business inquiries or feedback? We'd love to hear from you!</p>
+        </div>
+
+        <div class="contact-section">
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div>
+                            <strong>Email</strong>
+                            <p>support@lifequest.app</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">🏢</div>
+                        <div>
+                            <strong>Business Inquiries</strong>
+                            <p>business@lifequest.app</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon">📱</div>
+                        <div>
+                            <strong>Social Media</strong>
+                            <p>@LifeQuestApp</p>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form" onsubmit="submitContactForm(event)">
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <select id="subject" name="subject">
+                            <option value="feedback">Feedback</option>
+                            <option value="business">Business Inquiry</option>
+                            <option value="support">Support</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-button">Send Message</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>© 2025 LifeQuest. All rights reserved.</p>
+            </div>
+        </footer>
     </main>
 
     <!-- Modal -->
@@ -612,6 +919,94 @@
                 closeModal();
             }
         });
+
+        // Purchase premium subscription
+        async function purchasePremium(type, price) {
+            // In a real app, this would integrate with a payment processor
+            const confirmPurchase = confirm(`Confirm purchase of ${type === 'full' ? 'Premium Membership' : 'Ad Removal'} for €${price}?`);
+            
+            if (!confirmPurchase) return;
+            
+            // Show loading state
+            const button = event.target;
+            const originalText = button.textContent;
+            button.innerHTML = '<span class="loading"></span> Processing...';
+            button.disabled = true;
+            
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            
+            // Log transaction (placeholder for Supabase)
+            await logPremiumPurchase(type, price);
+            
+            // Show success message
+            alert(`Thank you for your purchase! Your ${type === 'full' ? 'Premium Membership' : 'Ad Removal'} has been activated.`);
+            
+            // Reset button
+            button.textContent = 'Purchased ✓';
+            button.disabled = true;
+            button.style.background = '#10b981';
+        }
+
+        // Log premium purchase to Supabase (placeholder)
+        async function logPremiumPurchase(type, price) {
+            console.log('Logging premium purchase:', {
+                user_id: 'user123', // In real app, get from auth
+                subscription_type: type,
+                price: price,
+                currency: 'EUR',
+                timestamp: new Date().toISOString()
+            });
+            
+            // In real implementation:
+            // const { data, error } = await supabaseClient
+            //     .from('subscriptions')
+            //     .insert([{
+            //         user_id: user.id,
+            //         subscription_type: type,
+            //         price: price,
+            //         currency: 'EUR'
+            //     }]);
+        }
+
+        // Submit contact form
+        async function submitContactForm(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            const formValues = Object.fromEntries(formData.entries());
+            
+            // Show loading state
+            const button = form.querySelector('button[type="submit"]');
+            const originalText = button.textContent;
+            button.innerHTML = '<span class="loading"></span> Sending...';
+            button.disabled = true;
+            
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Log form submission (placeholder for Supabase)
+            console.log('Contact form submission:', formValues);
+    
+            // In real implementation:
+            // const { data, error } = await supabaseClient
+            //     .from('contact_messages')
+            //     .insert([{
+            //         name: formValues.name,
+            //         email: formValues.email,
+            //         subject: formValues.subject,
+            //         message: formValues.message
+            //     }]);
+    
+            // Show success message
+            alert('Thank you for your message! We will get back to you soon.');
+    
+            // Reset form and button
+            form.reset();
+            button.textContent = originalText;
+            button.disabled = false;
+        }
     </script>
 </body>
 </html>
