@@ -75,7 +75,7 @@ async function handleLogin(email, password) {
 
     currentUser = data.user
     await loadUserData()
-    showApp()
+    //showApp()
     hideAuthError()
   } catch (error) {
     showAuthError(error.message)
