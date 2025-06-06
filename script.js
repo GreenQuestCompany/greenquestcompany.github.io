@@ -72,7 +72,6 @@ async function handleLogin(email, password) {
     })
 
     if (error) throw error
-    else showAuthSuccess("Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse, bevor du dich einloggen kannst.")
 
     currentUser = data.user
     await loadUserData()
@@ -106,6 +105,7 @@ async function handleSignup(username, email, password) {
     ])
 
     if (profileError) throw profileError
+    else showAuthSuccess("Registration successful, please verify email-address")
 
     currentUser = data.user
     await loadUserData()
@@ -126,6 +126,12 @@ function showAuthError(message) {
   const errorDiv = document.getElementById("auth-error")
   errorDiv.textContent = message
   errorDiv.classList.remove("hidden")
+}
+
+function showAuthSuccess(message) {
+  const successDiv = document.getElementById("auth-success")
+  successDiv.textContent = message
+  successDiv.classList.remove("hidden")
 }
 
 function hideAuthError() {
