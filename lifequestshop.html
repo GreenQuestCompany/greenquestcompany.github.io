@@ -932,12 +932,47 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         });
 
       // Holt aktuelle User-Session und -ID
-const { data: { user } } = await supabaseClient.auth.getUser();
-if (!user) {
-  alert('Du musst eingeloggt sein, um Premium zu kaufen!');
-  return;
+async function purchasePremium(type, price) {
+    const confirmPurchase = confirm(`Confirm purchase of ${type === 'full' ? 'Premium Membership' : 'Ad Removal'} for €${price}?`);
+    if (!confirmPurchase) return;
+
+    // Holt aktuelle User-Session und -ID
+    const { data: { user } } = await supabaseClient.auth.getUser();
+    if (!user) {
+        alert('Du musst eingeloggt sein, um Premium zu kaufen!');
+        return;
+    }
+    const userId = user.id;
+
+    // Lade Button-UI
+    const button = event.target;
+    const originalText = button.textContent;
+    button.innerHTML = '<span class="loading"></span> Processing...';
+    button.disabled = true;
+
+    // Warte (simulierte Zahlung)
+    await new Promise(resolve => setTimeout(resolve, 2000));
+
+    // --- SUPABASE-UPGRADE ---
+    if(type === 'full') {
+        const { error } = await supabaseClient
+            .from('users')
+            .update({ premium: true })
+            .eq('id', userId);
+        if(error) {
+            alert('Es gab einen Fehler beim Aktivieren von Premium!');
+            button.textContent = originalText;
+            button.disabled = false;
+            return;
+        }
+    }
+
+    // Erfolgsmeldung
+    alert(`Thank you for your purchase! Your ${type === 'full' ? 'Premium Membership' : 'Ad Removal'} has been activated.`);
+    button.textContent = 'Purchased ✓';
+    button.disabled = true;
+    button.style.background = '#10b981';
 }
-const userId = user.id;
 
 async function purchasePremium(type, price) {
     const confirmPurchase = confirm(`Confirm purchase of ${type === 'full' ? 'Premium Membership' : 'Ad Removal'} for €${price}?`);
