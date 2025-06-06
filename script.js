@@ -72,7 +72,7 @@ async function handleLogin(email, password) {
     })
 
     if (error) throw error
-    showAuthSuccess("Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse, bevor du dich einloggen kannst.")
+    else showAuthSuccess("Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse, bevor du dich einloggen kannst.")
 
     currentUser = data.user
     await loadUserData()
