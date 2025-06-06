@@ -931,8 +931,13 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             }
         });
 
-       // Beispiel-User-ID. In echt durch eingeloggten User ersetzen!
-const userId = 'user123';
+      // Holt aktuelle User-Session und -ID
+const { data: { user } } = await supabaseClient.auth.getUser();
+if (!user) {
+  alert('Du musst eingeloggt sein, um Premium zu kaufen!');
+  return;
+}
+const userId = user.id;
 
 async function purchasePremium(type, price) {
     const confirmPurchase = confirm(`Confirm purchase of ${type === 'full' ? 'Premium Membership' : 'Ad Removal'} for €${price}?`);
