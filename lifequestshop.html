@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    
     <meta charset="UTF-8">
     <link rel="icon" href="Bilder/faicon.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -719,6 +720,15 @@
     </div>
 
     <script>
+
+
+
+const SUPABASE_URL = "https://werkguvtcmwjfwypsljo.supabase.co"
+const SUPABASE_ANON_KEY = "eyJhbGciOi[...]";
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    
+
+        
         // Game state
         let userCoins = 500;
         let userItems = [];
