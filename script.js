@@ -90,6 +90,7 @@ async function handleSignup(username, email, password) {
     })
 
     if (error) throw error
+    showAuthSuccess("Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse, bevor du dich einloggen kannst.")
 
     // Create user profile
     const { error: profileError } = await supabaseClient.from("users").insert([
