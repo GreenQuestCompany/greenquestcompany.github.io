@@ -218,11 +218,11 @@ async function loadFriends() {
 
 // UI Update Functions
 function updateUserDisplay(userData) {
-  const progress = ((userData.xp - ((2 ** userData.level) - 1) * 1000) / userData.xp_to_next) * 100
+  const progress = ((userData.xp - ((2 ** (userData.level - 1) - 1) * 1000) / userData.xp_to_next) * 100
   document.getElementById("xp-progress").style.width = progress + "%"
 
   document.getElementById("user-level").textContent = userData.level
-  document.getElementById("current-xp").textContent = (userData.xp - ((2 ** userData.level) - 1) * 1000)
+  document.getElementById("current-xp").textContent = (userData.xp - ((2 ** (userData.level - 1)) - 1) * 1000)
   document.getElementById("max-xp").textContent = userData.xp_to_next.toLocaleString()
   document.getElementById("user-coins").textContent = userData.coins.toLocaleString()
   document.getElementById("username").textContent = userData.username
