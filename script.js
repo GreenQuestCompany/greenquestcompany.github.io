@@ -222,7 +222,7 @@ function updateUserDisplay(userData) {
   document.getElementById("xp-progress").style.width = progress + "%"
 
   document.getElementById("user-level").textContent = userData.level
-  document.getElementById("current-xp").textContent = userData.xp.toLocaleString()
+  document.getElementById("current-xp").textContent = ((userData.xp - 1000 * (userData.level - 1) * (userData.level - 1)) / userData.xp_to_next)
   document.getElementById("max-xp").textContent = userData.xp_to_next.toLocaleString()
   document.getElementById("user-coins").textContent = userData.coins.toLocaleString()
   document.getElementById("username").textContent = userData.username
