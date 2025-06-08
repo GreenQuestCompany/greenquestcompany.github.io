@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <link rel="icon" href="Bilder/faicon.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <title>Lootbox Shop - LifeQuest</title>
     <style>
         * {
@@ -722,6 +723,7 @@
         // Game state
         let userCoins = 500;
         let userItems = [];
+        let data = [];
 
         // Lootbox item pools
         const lootboxItems = {
@@ -756,16 +758,31 @@
 
         // Supabase placeholder integration
         const supabaseConfig = {
-            url: 'https://your-project.supabase.co',
-            key: 'your-anon-key'
+            url: 'https://werkguvtcmwjfwypsljo.supabase.co',
+            key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlcmtndXZ0Y213amZ3eXBzbGpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4NzU3MDMsImV4cCI6MjA2NDQ1MTcwM30.uXO8xBdn65AqTiwuyUPpRpKQxQXV0AJy3NKqOr45Zm4'
         };
 
+        const { createClient } = supabase;
+        const supabaseClient = createClient(supabaseConfig.url, supabaseConfig.key);
+        let currentUser;
         // Initialize Supabase client (placeholder)
-        function initSupabase() {
+        async function initSupabase() {
+            const {
+                data: { session },
+            } = await supabaseClient.auth.getSession()
+
+            if (session) {
+                currentUser = session.user
+            }
+            const { data: userData, error: userError } = await supabaseClient
+                .from("users")
+                .select("*")
+                .eq("id", currentUser.id)
+                .single()
+
             console.log('Supabase initialized (placeholder)');
+            data = userData;
             // In real implementation:
-            // const { createClient } = supabase;
-            // const supabaseClient = createClient(supabaseConfig.url, supabaseConfig.key);
         }
 
         // Update coin balance display
@@ -885,18 +902,18 @@
         async function loadUserData() {
             console.log('Loading user data (placeholder)');
             
-            // In real implementation:
-            // const { data, error } = await supabaseClient
-            //     .from('users')
-            //     .select('coins, items')
-            //     .eq('id', user.id)
-            //     .single();
+            //In real implementation:
+            const { data, error } = await supabaseClient
+                .from('users')
+                .select('coins')
+                .eq('id', currentUser.id)
+                .single();
             
-            // if (data) {
-            //     userCoins = data.coins || 500;
-            //     userItems = data.items || [];
-            //     updateCoinDisplay();
-            // }
+            if (data) {
+                userCoins = data.coins || 500;
+                userItems = [];
+                updateCoinDisplay();
+            }
         }
 
         // Close modal when clicking outside
@@ -908,9 +925,9 @@
         }
 
         // Initialize app
-        document.addEventListener('DOMContentLoaded', function() {
-            initSupabase();
-            loadUserData();
+        document.addEventListener('DOMContentLoaded', async function() {
+            await initSupabase();
+            await loadUserData();
             updateCoinDisplay();
         });
 
@@ -938,7 +955,7 @@
             await new Promise(resolve => setTimeout(resolve, 2000));
             
             // Log transaction (placeholder for Supabase)
-            await logPremiumPurchase(type, price);
+            await logPremiumPurchase(true);
             
             // Show success message
             alert(`Thank you for your purchase! Your ${type === 'full' ? 'Premium Membership' : 'Ad Removal'} has been activated.`);
@@ -950,24 +967,19 @@
         }
 
         // Log premium purchase to Supabase (placeholder)
-        async function logPremiumPurchase(type, price) {
+        async function logPremiumPurchase(type) {
             console.log('Logging premium purchase:', {
-                user_id: 'user123', // In real app, get from auth
-                subscription_type: type,
-                price: price,
-                currency: 'EUR',
+                premium: type,
                 timestamp: new Date().toISOString()
             });
             
             // In real implementation:
-            // const { data, error } = await supabaseClient
-            //     .from('subscriptions')
-            //     .insert([{
-            //         user_id: user.id,
-            //         subscription_type: type,
-            //         price: price,
-            //         currency: 'EUR'
-            //     }]);
+             const { data, error } = await supabaseClient
+                 .from('users')
+                 .insert([{
+                     id: currentUser.id,
+                     premium: type
+                 }]);
         }
 
         // Submit contact form
