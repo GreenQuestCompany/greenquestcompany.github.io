@@ -1,0 +1,285 @@
+/*#region Dark mode base styles */
+body.dark-mode {
+  background: #18181b;
+  color: #f3f4f6;
+  transition: background 0.3s, color 0.3s;
+}
+/*#endregion*/
+
+/*#region Text */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode p,
+body.dark-mode span {
+  color: #f3f4f6;
+}
+/*#endregion*/
+
+/*#region Card, modal, and container backgrounds */
+body.dark-mode .card,
+body.dark-mode .modal-content,
+body.dark-mode .quests-container,
+body.dark-mode .leaderboard-container,
+body.dark-mode .ad-space,
+body.dark-mode .auth-container {
+  background: #23232a;
+  color: #f3f4f6;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+/*#endregion*/
+
+/*#region Leaderboard */
+body.dark-mode .filter-btn {
+    background: #23232a;
+    color: #f3f4f6;
+}
+
+body.dark-mode .filter-btn.active {
+    background: #2563eb;
+    color: #fff;
+}
+
+body.dark-mode .filter-btn:not(.active) {
+    background: #23232a;
+    color: #a1a1aa;
+}
+
+body.dark-mode .filter-btn:not(.active):hover {
+    background: #18181b;
+}
+
+body.dark-mode .leaderboard-item {
+    background: #23232a;
+}
+
+body.dark-mode .leaderboard-item:hover {
+    background: #18181b;
+}
+
+body.dark-mode .leaderboard-item.current-user {
+    background: #1e293b;
+    border: 1px solid #2563eb;
+}
+
+body.dark-mode .rank-1 {
+    color: #fde047;
+}
+body.dark-mode .rank-2 {
+    color: #d1d5db;
+}
+body.dark-mode .rank-3 {
+    color: #fbbf24;
+}
+body.dark-mode .rank-other {
+    color: #a1a1aa;
+}
+
+body.dark-mode .player-name {
+    color: #f3f4f6;
+}
+
+body.dark-mode .player-name.current-user {
+    color: #60a5fa;
+}
+
+body.dark-mode .player-level {
+    color: #a1a1aa;
+}
+
+body.dark-mode .player-xp {
+    text-align: right;
+}
+
+body.dark-mode .xp-amount {
+    color: #f3f4f6;
+}
+
+body.dark-mode .xp-label {
+    color: #a1a1aa;
+}
+
+body.dark-mode .current-user-rank {
+    border-top: 1px solid #333;
+}
+/*#endregion */
+
+/*#region Header / Profile Section */
+body.dark-mode .header,
+body.dark-mode .profile-section,
+body.dark-mode .xp-container {
+  background: #23232a;
+}
+body.dark-mode .coins-display span {
+    font-weight: 500;
+    color: #92400e;
+}
+/*#endregion*/
+
+/*#region Quests */
+body.dark-mode .quest-item {
+    background: #23232a;
+    border-color: #333;
+    color: #f3f4f6;
+}
+
+body.dark-mode .quest-item:hover:not(.completed) {
+    border-color: #60a5fa;
+}
+
+body.dark-mode .quest-item.completed {
+    background: #1e293b;
+    border-color: #22d3ee;
+}
+
+body.dark-mode .quest-title {
+    color: #f3f4f6;
+}
+
+body.dark-mode .quest-title.completed {
+    color: #4ade80;
+}
+
+body.dark-mode .quest-category {
+    background: #18181b;
+    color: #f3f4f6;
+    border: 1px solid #333;
+}
+
+body.dark-mode .category-health {
+    background: #14532d;
+    color: #bbf7d0;
+}
+
+body.dark-mode .category-environment {
+    background: #134e4a;
+    color: #5eead4;
+}
+
+body.dark-mode .category-social {
+    background: #1e293b;
+    color: #93c5fd;
+}
+
+body.dark-mode .quest-description {
+    color: #a1a1aa;
+}
+
+body.dark-mode .quest-description.completed {
+    color: #4ade80;
+}
+
+body.dark-mode .reward.xp {
+    color: #60a5fa;
+}
+
+body.dark-mode .reward.coins {
+    color: #fbbf24;
+}
+/*#endregion*/
+
+/*#region Inputs and forms */
+body.dark-mode input,
+body.dark-mode .form-group input,
+body.dark-mode textarea {
+  background: #18181b;
+  color: #f3f4f6;
+  border-color: #333;
+}
+/*#endregion*/
+
+/*#region Profile button */
+body.dark-mode .profile-button {
+  background: #23232a;
+  color: #f3f4f6;
+  border: 1px solid #333;
+  transition: background 0.2s, color 0.2s;
+}
+body.dark-mode .profile-button:hover {
+  background: #18181b;
+}
+/*#endregion*/
+
+/* #region Loading Screen */
+body.dark-mode .loading-screen {
+  background: #18181b;
+  color: #f3f4f6;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+/*#endregion*/
+
+/*#region Buttons */
+body.dark-mode .chat-button {
+  background: #3d97ff;
+  border-color: #0077ff;
+  color: #1d1d1d;
+}
+body.dark-mode .chat-button:hover {
+  background: #bfdbfe;
+}
+
+body.dark-mode .invite-button {
+  background: #6dffaa;
+  border-color: #00ff73;
+  color: #1d1d1d;
+}
+body.dark-mode .invite-button:hover {
+  background: #99f6e4;
+}
+
+body.dark-mode .invite-button span,
+body.dark-mode .chat-button span {
+  color: #1d1d1d;
+}
+
+body.dark-mode .ad-button {
+    background: #f8f8f8;
+    color: #1d1d1d;
+    border: none;
+    transition: background 0.2s, color 0.2s;
+}
+/*#endregion*/
+
+/*#region Optional: icon animation */
+.darkmode-button .fa-moon,
+.darkmode-button .fa-sun {
+  transition: color 0.2s;
+}
+body.dark-mode .darkmode-button .fa-moon {
+  color: #facc15;
+}
+body:not(.dark-mode) .darkmode-button .fa-sun {
+  color: #fbbf24;
+}
+
+body.dark-mode .modal-content {
+  background: #23232a;
+  color: #f3f4f6;
+}
+
+body.dark-mode .modal-content input {
+  background: #18181b;
+  color: #f3f4f6;
+  border-color: #333;
+}
+body.dark-mode .modal-content input:focus {
+  border: 1.5px solid #1a6aff;
+  outline: none;
+}
+
+body.dark-mode .modal-content button[type="submit"] {
+  background: linear-gradient(to right, #2563eb, #14b8a6);
+  color: #fff;
+}
+
+body.dark-mode .modal-content button[type="submit"]:hover {
+  background: linear-gradient(to right, #1d4ed8, #0f766e);
+}
+body.dark-mode label {
+  color: #f3f4f6;
+}
+body.dark-mode button {
+    color: #ffffff;
+}
+/*#endregion*/

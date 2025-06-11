@@ -937,3 +937,28 @@ img {
 .auth-container {
   animation: logoutFormFade 0.4s forwards;
 }
+
+/*#region Darkmode-Button */
+.darkmode-button,
+.complete-button {
+  padding: 0.5rem 1rem;
+  background: linear-gradient(to right, #3b82f6, #14b8a6);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.darkmode-button:hover,
+.complete-button:hover {
+  background: linear-gradient(to right, #2563eb, #0f766e);
+}
+
+.darkmode-button:disabled,
+.complete-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/*#endregion*/
