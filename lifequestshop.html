@@ -657,7 +657,7 @@
                     </button>
                     <div class="user-info">
                         <div class="coin-balance">
-                            🪙 <span id="coinBalance">500</span> Coins
+                            🪙 <span id="coinBalance">0</span> Coins
                         </div>
                         <div class="level-info">
                             ⭐ Level 12
@@ -846,7 +846,7 @@
 
         <script>
             // Game state
-            let userCoins = 500;
+            let userCoins = 0;
             let userItems = [];
             let data = [];
 
@@ -1035,7 +1035,7 @@
                     .single();
                 
                 if (data) {
-                    userCoins = data.coins || 500;
+                    userCoins = data.coins || 0;
                     userItems = [];
                     updateCoinDisplay();
                 }
