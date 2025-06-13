@@ -912,11 +912,7 @@
 
             // Update coin balance display
             function updateCoinDisplay() {
-                document.getElementById('coinBalance').textContent = userCoins;
-
-            // Update Level
-            function updateLevelDisplay() {
-                document.getElementById('user-level').textContent = userLevel;    
+                document.getElementById('coinBalance').textContent = userCoins;   
                 
                 // Update button states based on coin balance
                 const buttons = document.querySelectorAll('.buy-button');
@@ -925,6 +921,9 @@
                     button.disabled = userCoins < price;
                 });
             }
+            // Update Level
+            function updateLevelDisplay() {
+                document.getElementById('user-level').textContent = userLevel; }
 
             // Get random item from lootbox
             function getRandomItem(boxType) {
