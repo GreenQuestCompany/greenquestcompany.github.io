@@ -660,7 +660,7 @@
                             🪙 <span id="coinBalance">0</span> Coins
                         </div>
                         <div class="level-info">
-                            ⭐ Level 12
+                            ⭐ Level <span id="user-level">1</span>
                         </div>
                     </div>
                 </div>
@@ -913,6 +913,10 @@
             // Update coin balance display
             function updateCoinDisplay() {
                 document.getElementById('coinBalance').textContent = userCoins;
+
+            // Update Level
+            function updateLevelDisplay() {
+                document.getElementById('user-level').textContent = userLevel;    
                 
                 // Update button states based on coin balance
                 const buttons = document.querySelectorAll('.buy-button');
@@ -1030,14 +1034,16 @@
                 //In real implementation:
                 const { data, error } = await supabaseClient
                     .from('users')
-                    .select('coins')
+                    .select('coins, level')
                     .eq('id', currentUser.id)
                     .single();
                 
                 if (data) {
                     userCoins = data.coins || 0;
+                    userLevel = data.level;
                     userItems = [];
                     updateCoinDisplay();
+                    updateLevelDisplay();
                 }
             }
 
@@ -1054,6 +1060,7 @@
                 await initSupabase();
                 await loadUserData();
                 updateCoinDisplay();
+                updateLevelDisplay();
             });
 
             // Keyboard shortcuts
