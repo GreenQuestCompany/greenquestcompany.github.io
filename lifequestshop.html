@@ -1034,7 +1034,7 @@
                 //In real implementation:
                 const { data, error } = await supabaseClient
                     .from('users')
-                    .select('coins, level')
+                    .select('*')
                     .eq('id', currentUser.id)
                     .single();
                 
