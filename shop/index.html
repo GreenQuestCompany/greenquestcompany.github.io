@@ -2,35 +2,45 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <link rel="icon" href="assets/img/favicon.png" type="image/png">
+        <link rel="icon" href="/assets/img/favicon.png" type="image/png">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
         <title>Lootbox Shop - LifeQuest</title>
-        <script src="/scripts/darkmode.js" defer></script>
+        <link rel="stylesheet" href="/assets/css/styles.css">
         <link rel="stylesheet" href="/assets/css/shop.css">
     </head>
     <body>
         <!-- Header -->
         <header class="header">
-            <div class="container">
-                <div class="header-content">
-                    <a href="/" style="text-decoration:none;">
-                        <div class="logo">
-                            LifeQuest
+            <div class="header-content">
+                <div class="logo">
+                    <a href="/"><h1>LifeQuest</h1></a>
+                </div>
+
+                <!-- Dark Mode Toggle - Left -->
+                <button id="darkmode-toggle" class="darkmode-button" title="Toggle dark mode">
+                    <i class="fa fa-moon"></i>
+                </button>
+
+                <!-- Profile Avatar - Right -->
+                <div class="profile-section">
+                    <button class="profile-button" onclick="window.location.href='/shop/'">
+                        <div class="coins-display">
+                            <i class="fas fa-coins"></i>
+                            <span id="user-coins">0</span>
                         </div>
-                    </a>
-                    <button id="darkmode-toggle" class="darkmode-button" title="Toggle dark mode">
-                        <i class="fa fa-moon"></i>
                     </button>
-                    <div class="user-info">
-                        <div class="coin-balance">
-                            🪙 <span id="coinBalance">0</span> Coins
+                    <button class="profile-button" onclick="logout()">
+                        <div class="avatar">
+                            <i class="fas fa-user"></i>
                         </div>
-                        <div class="level-info">
-                            ⭐ Level <span id="user-level">1</span>
+                        <div class="profile-info">
+                            <p class="username" id="username">User</p>
+                            <p class="user-level-small">Level <span id="profile-level">1</span></p>
                         </div>
-                    </div>
+                        <i class="fas fa-sign-out-alt profile-settings"></i>
+                    </button>
                 </div>
             </div>
         </header>
@@ -280,7 +290,7 @@
 
             // Update coin balance display
             function updateCoinDisplay() {
-                document.getElementById('coinBalance').textContent = userCoins;   
+                document.getElementById('user-coins').textContent = userCoins;   
                 
                 // Update button states based on coin balance
                 const buttons = document.querySelectorAll('.buy-button');
@@ -520,5 +530,7 @@
                 button.disabled = false;
             }
         </script>
+
+        <script src="/scripts/darkmode.js"></script>
     </body>
 </html>

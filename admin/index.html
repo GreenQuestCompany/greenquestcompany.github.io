@@ -2,15 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="../assets/img/favicon.png" type="image/png">
+    <link rel="icon" href="/assets/img/favicon.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LifeQuest Admin Panel</title>
-    <link rel="stylesheet" href="/assets/css/styles.css">
+    <!-- CSS Modules -->
+    <link rel="stylesheet" href="/assets/css/variables.css">
+    <link rel="stylesheet" href="/assets/css/reset.css">
+    <link rel="stylesheet" href="/assets/css/layout.css">
+    <link rel="stylesheet" href="/assets/css/components.css">
     <link rel="stylesheet" href="/assets/css/admin.css">
+    <link rel="stylesheet" href="/assets/css/darkmode.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="/scripts/darkmode.js" defer></script>
-    <script src="/scripts/admin.js" defer></script>
 </head>
 <body>
     <!-- Loading Screen -->
@@ -481,5 +484,7 @@
             <span id="notification-message"></span>
         </div>
     </div>
+    <script src="/scripts/darkmode.js"></script>
+    <script src="/scripts/admin.js"></script>
 </body>
 </html>

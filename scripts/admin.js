@@ -568,7 +568,12 @@ function openAddUserModal() {
     document.getElementById("add-user-modal").classList.remove("hidden")
 }
 
-function openAddQuestModal() {
+async function openAddQuestModal() {
+    // Ensure categories are loaded before opening modal
+    if (allCategories.length === 0) {
+        await loadCategoriesData()
+    }
+    updateCategorySelects()
     document.getElementById("add-quest-modal").classList.remove("hidden")
 }
 
@@ -650,24 +655,69 @@ async function handleAddQuest(event) {
     const title = document.getElementById("new-quest-title").value
     const description = document.getElementById("new-quest-description").value
     const categoryId = document.getElementById("new-quest-category").value
-    const difficulty = document.getElementById("new-quest-difficulty").value
     const xpReward = parseInt(document.getElementById("new-quest-xp").value)
     const coinReward = parseInt(document.getElementById("new-quest-coins").value)
     const isDaily = document.getElementById("new-quest-daily").checked
 
+    // Debug logging
+    console.log("Form values:", {
+        title,
+        description,
+        categoryId,
+        xpReward,
+        coinReward,
+        isDaily
+    })
+
+    // Validate required fields
+    if (!title.trim()) {
+        showNotification("Please enter a quest title", "error")
+        return
+    }
+    
+    if (!description.trim()) {
+        showNotification("Please enter a quest description", "error")
+        return
+    }
+    
+    if (!categoryId || categoryId === "" || categoryId === "Select Category") {
+        showNotification("Please select a valid category for the quest", "error")
+        return
+    }
+
     try {
-        const { error } = await supabaseClient.from("quests").insert([{
-            title: title,
-            description: description,
-            category_id: categoryId,
-            difficulty: difficulty,
+        // Ensure category exists before creating quest
+        const { data: categoryExists, error: categoryError } = await supabaseClient
+            .from("categories")
+            .select("id")
+            .eq("id", parseInt(categoryId))
+            .single()
+
+        if (categoryError || !categoryExists) {
+            showNotification("Selected category does not exist", "error")
+            return
+        }
+
+        const questData = {
+            title: title.trim(),
+            description: description.trim(),
+            category_id: parseInt(categoryId),
             xp_reward: xpReward,
             coin_reward: coinReward,
             is_daily: isDaily,
             created_at: new Date().toISOString()
-        }])
+        }
 
-        if (error) throw error
+        console.log("Inserting quest data:", questData)
+
+        const { data, error } = await supabaseClient.from("quests").insert([questData]).select()
+
+        if (error) {
+            console.error("Supabase error:", error)
+            throw error
+        }
+
+        console.log("Quest created successfully:", data)
 
         showNotification("Quest created successfully", "success")
         closeModal("add-quest-modal")

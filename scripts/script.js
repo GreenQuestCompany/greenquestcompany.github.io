@@ -1,14 +1,12 @@
-///<reference path="res/supabase.js" />
-
 // Supabase Configuration
 const SUPABASE_URL = "https://werkguvtcmwjfwypsljo.supabase.co"
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlcmtndXZ0Y213amZ3eXBzbGpvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4NzU3MDMsImV4cCI6MjA2NDQ1MTcwM30.uXO8xBdn65AqTiwuyUPpRpKQxQXV0AJy3NKqOr45Zm4"
 
 // Initialize Supabase client
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Global state
-let currentUser = null
+let currentUser = null;
 let userQuests = []
 let allQuests = []
 
@@ -155,8 +153,8 @@ async function loadUserData() {
     // Update last login
     await supabaseClient.from("users").update({ last_login: new Date().toISOString() }).eq("id", currentUser.id)
 
-    // Load quests and user progress
-    await Promise.all([loadQuests(), loadLeaderboard(), loadFriends()])
+    // Load categories, quests and user progress
+    await Promise.all([loadCategories(), loadQuests(), loadLeaderboard(), loadFriends()])
 
     updateUserDisplay(userData)
   } catch (error) {
@@ -164,13 +162,36 @@ async function loadUserData() {
   }
 }
 
+async function loadCategories() {
+  try {
+    const { data: categoriesData, error: categoriesError } = await supabaseClient
+      .from("categories")
+      .select("*")
+
+    if (categoriesError) throw categoriesError
+    allCategories = categoriesData || []
+  } catch (error) {
+    console.error("Error loading categories:", error)
+  }
+}
+
 async function loadQuests() {
   try {
-    // Load all quests
-    const { data: questsData, error: questsError } = await supabaseClient.from("quests").select("*")
+    // Load all quests with category information
+    const { data: questsData, error: questsError } = await supabaseClient
+      .from("quests")
+      .select(`
+        *,
+        categories (
+          id,
+          name,
+          color,
+          icon
+        )
+      `)
 
     if (questsError) throw questsError
-    allQuests = questsData
+    allQuests = questsData || []
 
     // Load user quest progress
     const { data: userQuestsData, error: userQuestsError } = await supabaseClient
@@ -179,7 +200,7 @@ async function loadQuests() {
       .eq("user_id", currentUser.id)
 
     if (userQuestsError) throw userQuestsError
-    userQuests = userQuestsData
+    userQuests = userQuestsData || []
 
     renderQuests()
   } catch (error) {
@@ -245,6 +266,8 @@ function renderQuests() {
 function createQuestElement(quest, userQuest) {
   const questDiv = document.createElement("div")
   const isCompleted = userQuest && userQuest.completed
+  const category = quest.categories || { name: 'Uncategorized', color: '#6b7280', icon: 'fas fa-question' }
+  
   questDiv.className = `quest-item ${isCompleted ? "completed" : ""}`
 
   questDiv.innerHTML = `
@@ -252,7 +275,10 @@ function createQuestElement(quest, userQuest) {
             <div class="quest-info">
                 <div class="quest-title-row">
                     <h3 class="quest-title ${isCompleted ? "completed" : ""}">${quest.title}</h3>
-                    <span class="quest-category category-${quest.category}">${quest.category}</span>
+                    <span class="quest-category" style="background-color: ${category.color}20; color: ${category.color}; border: 1px solid ${category.color}40;">
+                        <i class="${category.icon}"></i>
+                        ${category.name}
+                    </span>
                 </div>
                 <p class="quest-description ${isCompleted ? "completed" : ""}">${quest.description}</p>
                 <div class="quest-rewards">
