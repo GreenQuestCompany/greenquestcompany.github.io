@@ -1,2 +1,2 @@
-# lifequest.github.io
+# LifeQuest
 Gamify your Life
