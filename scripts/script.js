@@ -9,6 +9,80 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let currentUser = null;
 let userQuests = []
 let allQuests = []
+let isGuest = false;
+let guestUserData = null;
+
+// Guest user helper functions
+function initializeGuestUser(userDataFromDB = null) {
+  const savedGuestData = localStorage.getItem('guestUserData');
+  if (savedGuestData) {
+    guestUserData = JSON.parse(savedGuestData);
+    
+    // If we have database data for a guest user, merge it with local data
+    if (userDataFromDB && userDataFromDB.is_guest === true) {
+      // Keep the higher values between local and database (in case local progress is ahead)
+      guestUserData = {
+        ...userDataFromDB,
+        id: userDataFromDB.id || 'guest-user',
+        username: userDataFromDB.username || guestUserData.username,
+        level: Math.max(guestUserData.level || 1, userDataFromDB.level || 1),
+        xp: Math.max(guestUserData.xp || 0, userDataFromDB.xp || 0),
+        xp_to_next: userDataFromDB.xp_to_next || guestUserData.xp_to_next || 1000,
+        coins: Math.max(guestUserData.coins || 0, userDataFromDB.coins || 0),
+        is_guest: true
+      };
+      saveGuestData();
+    }
+  } else {
+    if (userDataFromDB && userDataFromDB.is_guest === true) {
+      // Use database data as base for guest user
+      guestUserData = {
+        ...userDataFromDB,
+        is_guest: true
+      };
+    } else {
+      // Create default guest user data
+      guestUserData = {
+        id: 'guest-user',
+        username: 'Guest User',
+        level: 1,
+        xp: 0,
+        xp_to_next: 1000,
+        coins: 0,
+        is_guest: true
+      };
+    }
+    saveGuestData();
+  }
+  
+  // Load guest quest progress
+  const savedQuestData = localStorage.getItem('guestUserQuests');
+  if (savedQuestData) {
+    userQuests = JSON.parse(savedQuestData);
+  }
+}
+
+function saveGuestData() {
+  localStorage.setItem('guestUserData', JSON.stringify(guestUserData));
+  localStorage.setItem('guestUserQuests', JSON.stringify(userQuests));
+}
+
+function checkIfGuest(user) {
+  return user && user.is_guest === true;
+}
+
+// Function to start guest mode
+function startGuestMode() {
+  isGuest = true;
+  currentUser = {
+    id: 'guest-user',
+    email: 'guest@greenquest.com',
+    is_guest: true
+  };
+  initializeGuestUser();
+  loadUserData();
+  showApp();
+}
 
 // Initialize App
 document.addEventListener("DOMContentLoaded", () => {
@@ -141,24 +215,61 @@ function hideAuthError() {
 // Data Loading Functions
 async function loadUserData() {
   try {
-    // Load user profile
-    const { data: userData, error: userError } = await supabaseClient
-      .from("users")
-      .select("*")
-      .eq("id", currentUser.id)
-      .single()
+    let userData;
+    
+    if (isGuest) {
+      initializeGuestUser();
+      userData = guestUserData;
+      
+      // For guest users, only load quests and categories (no database operations)
+      await Promise.all([loadCategories(), loadQuestsForGuest()]);
+    } else {
+      try {
+        // First, try to load user profile from database to check is_guest property
+        const { data: userDataFromDB, error: userError } = await supabaseClient
+          .from("users")
+          .select("*")
+          .eq("id", currentUser.id)
+          .single()
 
-    if (userError) throw userError
+        if (userError) throw userError;
+        
+        // Check if user is a guest based on database is_guest property
+        if (userDataFromDB.is_guest === true) {
+          isGuest = true;
+          initializeGuestUser(userDataFromDB);
+          userData = guestUserData;
+          
+          // For guest users, only load quests and categories (no database operations)
+          await Promise.all([loadCategories(), loadQuestsForGuest()]);
+        } else {
+          userData = userDataFromDB;
 
-    // Update last login
-    await supabaseClient.from("users").update({ last_login: new Date().toISOString() }).eq("id", currentUser.id)
+          // Update last login
+          await supabaseClient.from("users").update({ last_login: new Date().toISOString() }).eq("id", currentUser.id)
 
-    // Load categories, quests and user progress
-    await Promise.all([loadCategories(), loadQuests(), loadLeaderboard(), loadFriends()])
+          // Load categories, quests and user progress
+          await Promise.all([loadCategories(), loadQuests(), loadLeaderboard(), loadFriends()]);
+        }
+      } catch (dbError) {
+        // If database query fails, fallback to checking auth user properties
+        isGuest = checkIfGuest(currentUser);
+        
+        if (isGuest) {
+          initializeGuestUser();
+          userData = guestUserData;
+          
+          // For guest users, only load quests and categories (no database operations)
+          await Promise.all([loadCategories(), loadQuestsForGuest()]);
+        } else {
+          throw dbError; // Re-throw the error if not a guest
+        }
+      }
+    }
 
-    updateUserDisplay(userData)
+    updateUserDisplay(userData);
   } catch (error) {
-    console.error("Error loading user data:", error)
+    console.error("Error loading user data:", error);
   }
 }
 
@@ -205,6 +316,31 @@ async function loadQuests() {
     renderQuests()
   } catch (error) {
     console.error("Error loading quests:", error)
+  }
+}
+
+async function loadQuestsForGuest() {
+  try {
+    // Load all quests with category information for guest users
+    const { data: questsData, error: questsError } = await supabaseClient
+      .from("quests")
+      .select(`
+        *,
+        categories (
+          id,
+          name,
+          color,
+          icon
+        )
+      `)
+
+    if (questsError) throw questsError
+    allQuests = questsData || []
+
+    // Guest quest progress is already loaded from localStorage in initializeGuestUser()
+    renderQuests()
+  } catch (error) {
+    console.error("Error loading quests for guest:", error)
   }
 }
 
@@ -314,63 +450,115 @@ async function completeQuest(questId) {
     const existingUserQuest = userQuests.find((uq) => uq.quest_id === questId)
     if (existingUserQuest && existingUserQuest.completed) return
 
-    // Mark quest as completed
-    const { error: questError } = await supabaseClient.from("user_quests").upsert({
-      user_id: currentUser.id,
-      quest_id: questId,
-      completed: true,
-      completed_at: new Date().toISOString(),
-    })
-
-    if (questError) throw questError
-
-    // Update user XP and coins
-    const { data: userData, error: userError } = await supabaseClient
-      .from("users")
-      .select("*")
-      .eq("id", currentUser.id)
-      .single()
-
-    if (userError) throw userError
-
-    const newXP = userData.xp + quest.xp_reward
-    const newCoins = userData.coins + quest.coin_reward
-    let newLevel = userData.level
-    let newXPToNext = userData.xp_to_next
-
-    // Check for level up
-    if (newXP >= userData.xp_to_next) {
-      newLevel++
-      newXPToNext = Math.floor(userData.xp_to_next * 1.2)
+    if (isGuest) {
+      // Handle guest user quest completion locally
+      completeQuestForGuest(questId, quest);
+    } else {
+      // Handle regular user quest completion with database
+      await completeQuestForUser(questId, quest);
     }
-
-    const { error: updateError } = await supabaseClient
-      .from("users")
-      .update({
-        xp: newXP,
-        coins: newCoins,
-        level: newLevel,
-        xp_to_next: newXPToNext,
-      })
-      .eq("id", currentUser.id)
-
-    if (updateError) throw updateError
-
-    // Update local state
-    userQuests = userQuests.filter((uq) => uq.quest_id !== questId)
-    userQuests.push({
-      user_id: currentUser.id,
-      quest_id: questId,
-      completed: true,
-      completed_at: new Date().toISOString(),
-    })
-
-    // Refresh displays
-    await loadUserData()
-    showSuccessModal(quest)
   } catch (error) {
     console.error("Error completing quest:", error)
   }
+}
+
+function completeQuestForGuest(questId, quest) {
+  // Update local quest state for guest
+  userQuests = userQuests.filter((uq) => uq.quest_id !== questId)
+  userQuests.push({
+    user_id: 'guest-user',
+    quest_id: questId,
+    completed: true,
+    completed_at: new Date().toISOString(),
+  })
+
+  // Update guest user data locally
+  const newXP = guestUserData.xp + quest.xp_reward
+  const newCoins = guestUserData.coins + quest.coin_reward
+  let newLevel = guestUserData.level
+  let newXPToNext = guestUserData.xp_to_next
+
+  // Check for level up
+  const totalXPForCurrentLevel = (2 ** (guestUserData.level - 1) - 1) * 1000;
+  const currentLevelXP = guestUserData.xp - totalXPForCurrentLevel;
+  
+  if (currentLevelXP + quest.xp_reward >= guestUserData.xp_to_next) {
+    newLevel++
+    newXPToNext = Math.floor(guestUserData.xp_to_next * 1.2)
+  }
+
+  // Update guest user data
+  guestUserData.xp = newXP
+  guestUserData.coins = newCoins
+  guestUserData.level = newLevel
+  guestUserData.xp_to_next = newXPToNext
+
+  // Save to localStorage
+  saveGuestData()
+
+  // Update displays
+  updateUserDisplay(guestUserData)
+  renderQuests()
+  showSuccessModal(quest)
+}
+
+async function completeQuestForUser(questId, quest) {
+  // Mark quest as completed in database
+  const { error: questError } = await supabaseClient.from("user_quests").upsert({
+    user_id: currentUser.id,
+    quest_id: questId,
+    completed: true,
+    completed_at: new Date().toISOString(),
+  })
+
+  if (questError) throw questError
+
+  // Update user XP and coins
+  const { data: userData, error: userError } = await supabaseClient
+    .from("users")
+    .select("*")
+    .eq("id", currentUser.id)
+    .single()
+
+  if (userError) throw userError
+
+  console.log("User Data:", userData)
+
+  const newXP = userData.xp + quest.xp_reward
+  const newCoins = userData.coins + quest.coin_reward
+  let newLevel = userData.level
+  let newXPToNext = userData.xp_to_next
+
+  // Check for level up
+  if (newXP >= userData.xp_to_next) {
+    newLevel++
+    newXPToNext = Math.floor(userData.xp_to_next * 1.2)
+  }
+
+  const { error: updateError } = await supabaseClient
+    .from("users")
+    .update({
+      xp: newXP,
+      coins: newCoins,
+      level: newLevel,
+      xp_to_next: newXPToNext,
+    })
+    .eq("id", currentUser.id)
+
+  if (updateError) throw updateError
+
+  // Update local state
+  userQuests = userQuests.filter((uq) => uq.quest_id !== questId)
+  userQuests.push({
+    user_id: currentUser.id,
+    quest_id: questId,
+    completed: true,
+    completed_at: new Date().toISOString(),
+  })
+
+  // Refresh displays
+  await loadUserData()
+  showSuccessModal(quest)
 }
 
 function renderLeaderboard(leaderboardData) {
