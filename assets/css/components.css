@@ -217,6 +217,7 @@ select.form-control {
   box-shadow: var(--shadow-xl);
   transform: scale(0.95);
   transition: transform var(--transition-base);
+  text-align: center;
 }
 
 .modal:not(.hidden) .modal-content {
@@ -225,9 +226,16 @@ select.form-control {
 
 .modal-header {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   margin-bottom: var(--spacing-xl);
+  gap: var(--spacing-sm);
+}
+
+.modal-header i {
+  font-size: var(--font-3xl);
+  color: var(--color-success);
 }
 
 .modal-header h3 {
@@ -237,26 +245,35 @@ select.form-control {
 }
 
 .modal-close {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
+  padding: var(--spacing-md) var(--spacing-2xl);
+  font-size: var(--font-sm);
+  font-weight: var(--font-medium);
   border: none;
-  background: none;
-  color: var(--text-muted);
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  border-radius: var(--radius-md);
   transition: var(--transition-all);
+  background: var(--bg-gradient-button);
+  color: var(--text-inverse);
+  margin-top: var(--spacing-lg);
+  min-height: var(--button-height);
 }
 
 .modal-close:hover {
-  background: var(--bg-tertiary);
-  color: var(--text-primary);
+  background: var(--bg-gradient-button-hover);
+  transform: var(--btn-hover-transform);
 }
 
 .modal-body {
   margin-bottom: var(--spacing-xl);
+}
+
+.modal-body p {
+  margin-bottom: var(--spacing-lg);
+  color: var(--text-secondary);
+  font-size: var(--font-base);
 }
 
 .modal-actions {
@@ -264,6 +281,37 @@ select.form-control {
   gap: var(--spacing-md);
   justify-content: flex-end;
   margin-top: var(--spacing-xl);
+}
+
+/* Modal Rewards Styles */
+.rewards {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-2xl);
+  margin: var(--spacing-xl) 0;
+}
+
+.rewards .reward {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  background: var(--bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-primary);
+  min-width: 80px;
+}
+
+.rewards .reward i {
+  font-size: var(--font-xl);
+  color: var(--color-primary);
+}
+
+.rewards .reward span {
+  font-weight: var(--font-semibold);
+  color: var(--text-primary);
+  font-size: var(--font-sm);
 }
 
 /* Table Components */
@@ -519,6 +567,16 @@ select.form-control {
   
   .modal-actions {
     flex-direction: column;
+  }
+
+  .rewards {
+    gap: var(--spacing-lg);
+    margin: var(--spacing-lg) 0;
+  }
+
+  .rewards .reward {
+    min-width: 60px;
+    padding: var(--spacing-sm);
   }
   
   .btn {
